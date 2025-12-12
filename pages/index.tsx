@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import Head from 'next/head';
-import { WebChatInterface } from '../src/web/components/WebChatInterface';
+import { AgenticChatInterface } from '../src/web/components/AgenticChatInterface';
 import { ModelSelector as WebModelSelector } from '../src/web/components/WebModelSelector';
 import { FileExplorer } from '../src/web/components/FileExplorer';
 import { CodeEditor } from '../src/web/components/CodeEditor';
@@ -11,6 +11,7 @@ export default function Home() {
   const [currentFile, setCurrentFile] = useState<string | null>(null);
   const [fileContent, setFileContent] = useState<string>('');
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const fileExplorerRef = useRef<any>(null);
 
   const handleModelSelect = (model: ModelInfo) => {
     setSelectedModel(model);
@@ -19,6 +20,13 @@ export default function Home() {
   const handleFileSelect = (path: string, content: string) => {
     setCurrentFile(path);
     setFileContent(content);
+  };
+
+  const handleFileChange = () => {
+    // Refresh file explorer when agent modifies files
+    if (fileExplorerRef.current && fileExplorerRef.current.refresh) {
+      fileExplorerRef.current.refresh();
+    }
   };
 
   return (
@@ -37,7 +45,7 @@ export default function Home() {
             sidebarOpen ? 'w-64' : 'w-0'
           } transition-all duration-300 border-r border-gray-700 overflow-hidden`}
         >
-          <FileExplorer onFileSelect={handleFileSelect} />
+          <FileExplorer ref={fileExplorerRef} onFileSelect={handleFileSelect} />
         </div>
 
         {/* Main Content Area */}
@@ -72,6 +80,13 @@ export default function Home() {
             <div className="flex items-center gap-4">
               {selectedModel ? (
                 <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-1 text-yellow-400">
+                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                      <path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                    </svg>
+                    <span className="text-xs font-semibold">AGENTIC MODE</span>
+                  </div>
+                  <span className="text-sm text-gray-400">|</span>
                   <span className="text-sm text-gray-400">Model:</span>
                   <span className="text-sm font-medium text-blue-400">
                     {selectedModel.name}
@@ -129,7 +144,10 @@ export default function Home() {
 
               {/* Chat Panel */}
               <div className="w-96 border-l border-gray-700 flex flex-col">
-                <WebChatInterface model={selectedModel} />
+                <AgenticChatInterface
+                  model={selectedModel}
+                  onFileChange={handleFileChange}
+                />
               </div>
             </div>
           )}

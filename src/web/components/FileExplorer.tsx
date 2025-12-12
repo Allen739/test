@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useImperativeHandle, forwardRef } from 'react';
 
 interface FileNode {
   name: string;
@@ -11,7 +11,7 @@ interface FileExplorerProps {
   onFileSelect: (path: string, content: string) => void;
 }
 
-export const FileExplorer: React.FC<FileExplorerProps> = ({ onFileSelect }) => {
+export const FileExplorer = forwardRef<any, FileExplorerProps>(({ onFileSelect }, ref) => {
   const [fileTree, setFileTree] = useState<FileNode[]>([]);
   const [expandedDirs, setExpandedDirs] = useState<Set<string>>(new Set(['/']));
   const [loading, setLoading] = useState(true);
@@ -21,6 +21,7 @@ export const FileExplorer: React.FC<FileExplorerProps> = ({ onFileSelect }) => {
   }, []);
 
   const loadFileTree = async () => {
+    setLoading(true);
     try {
       const response = await fetch('/api/files');
       const data = await response.json();
@@ -31,6 +32,11 @@ export const FileExplorer: React.FC<FileExplorerProps> = ({ onFileSelect }) => {
       setLoading(false);
     }
   };
+
+  // Expose refresh method to parent
+  useImperativeHandle(ref, () => ({
+    refresh: loadFileTree,
+  }));
 
   const toggleDirectory = (path: string) => {
     setExpandedDirs((prev) => {
@@ -148,4 +154,4 @@ export const FileExplorer: React.FC<FileExplorerProps> = ({ onFileSelect }) => {
       </div>
     </div>
   );
-};
+});
