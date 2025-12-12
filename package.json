@@ -7,11 +7,14 @@
     "code-agent": "./dist/cli.js"
   },
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && next build",
+    "build:cli": "tsc",
     "dev": "tsx src/cli.tsx",
+    "dev:web": "next dev",
     "start": "node dist/cli.js",
+    "start:web": "next start",
     "watch": "tsc --watch",
-    "prepublishOnly": "npm run build"
+    "prepublishOnly": "npm run build:cli"
   },
   "keywords": [
     "cli",
@@ -28,6 +31,8 @@
   "dependencies": {
     "ink": "^4.4.1",
     "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "next": "^14.0.4",
     "ink-text-input": "^5.0.1",
     "ink-select-input": "^5.0.0",
     "ink-spinner": "^5.0.0",
@@ -40,15 +45,27 @@
     "ora": "^5.4.1",
     "dotenv": "^16.3.1",
     "gray-matter": "^4.0.3",
-    "marked": "^11.0.0"
+    "marked": "^11.0.0",
+    "@monaco-editor/react": "^4.6.0",
+    "react-icons": "^4.12.0",
+    "uuid": "^9.0.1",
+    "ws": "^8.16.0",
+    "socket.io": "^4.6.1",
+    "socket.io-client": "^4.6.1"
   },
   "devDependencies": {
     "@types/react": "^18.2.45",
+    "@types/react-dom": "^18.2.18",
     "@types/node": "^20.10.5",
     "@types/fs-extra": "^11.0.4",
+    "@types/uuid": "^9.0.7",
+    "@types/ws": "^8.5.10",
     "typescript": "^5.3.3",
     "tsx": "^4.7.0",
-    "@types/marked": "^6.0.0"
+    "@types/marked": "^6.0.0",
+    "tailwindcss": "^3.4.0",
+    "postcss": "^8.4.32",
+    "autoprefixer": "^10.4.16"
   },
   "engines": {
     "node": ">=18.0.0"

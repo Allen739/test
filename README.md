@@ -1,10 +1,22 @@
-# React CLI Coding Agent
+# Software Builder - Terragon Labs
 
-A fully functional CLI coding agent built with React (Ink) and TypeScript, supporting multiple AI models from OpenAI, Anthropic, and more.
+A fully functional AI-powered software building agent with both CLI and Web interfaces. Built with React, Next.js, and TypeScript, supporting multiple AI models from OpenAI, Anthropic, and more.
 
 ## Features
 
+### 🌐 Web Interface
+- Modern, intuitive web-based UI built with Next.js
+- Real-time code editor with syntax highlighting (Monaco Editor)
+- Interactive file explorer
+- Live chat interface with AI streaming responses
+- Multi-model support with easy switching
+
+### 💻 CLI Interface
 - Interactive terminal UI built with React Ink
+- Full feature parity with web interface
+- Perfect for terminal-based workflows
+
+### 🤖 AI Capabilities
 - Support for multiple AI providers:
   - OpenAI (GPT-4, GPT-3.5 Turbo)
   - Anthropic (Claude 3 Opus, Sonnet, Haiku)
@@ -50,6 +62,16 @@ npm run build
 
 ### 4. Run
 
+#### Web Interface (Recommended)
+
+```bash
+npm run dev:web
+```
+
+Then open your browser to `http://localhost:3000`
+
+#### CLI Interface
+
 ```bash
 npm run dev
 # or
@@ -60,9 +82,41 @@ npm start
 
 ## Usage
 
-### Interactive Chat Mode
+### Web Interface
 
-Simply run the agent to start an interactive chat session:
+The web interface provides a complete IDE-like experience for building software with AI:
+
+1. **Start the web server:**
+   ```bash
+   npm run dev:web
+   ```
+
+2. **Open your browser** to `http://localhost:3000`
+
+3. **Select your AI model** from the available options
+
+4. **Start building:**
+   - Use the file explorer on the left to browse and open files
+   - Edit code in the Monaco editor (center panel)
+   - Chat with the AI assistant on the right
+   - Ask the AI to generate code, fix bugs, or explain concepts
+   - Files are automatically saved when you click "Save" or press Ctrl+S
+
+#### Web Interface Features
+
+- **File Explorer**: Browse and select files from your project
+- **Code Editor**: Full-featured Monaco editor with:
+  - Syntax highlighting for all major languages
+  - Auto-completion
+  - Multiple cursors
+  - Find and replace
+  - Keyboard shortcuts (Ctrl+S to save, etc.)
+- **AI Chat**: Real-time streaming chat with your selected AI model
+- **Model Switching**: Change AI models on the fly
+
+### CLI Interface
+
+For terminal enthusiasts, the CLI provides a powerful text-based interface:
 
 ```bash
 npm run dev
@@ -188,22 +242,48 @@ The agent understands your project structure and can work with multiple files:
 
 ## Development
 
-### Watch Mode
+### Web Development Mode
 
 ```bash
-npm run watch
+npm run dev:web
 ```
 
-### Development Mode
+Starts the Next.js development server with hot-reloading at `http://localhost:3000`
+
+### CLI Development Mode
 
 ```bash
 npm run dev
 ```
 
+Runs the CLI in development mode with TypeScript execution.
+
+### Watch Mode (TypeScript)
+
+```bash
+npm run watch
+```
+
+Continuously compiles TypeScript files to the `dist` directory.
+
 ### Build
 
 ```bash
+# Build both web and CLI
 npm run build
+
+# Build only CLI
+npm run build:cli
+```
+
+### Production
+
+```bash
+# Web interface
+npm run start:web
+
+# CLI interface
+npm start
 ```
 
 ## Advanced Features
@@ -244,8 +324,21 @@ Add them to your `.env` file.
 
 ## Examples
 
+### Web Interface Workflow
+
+1. **Open the web interface** at `http://localhost:3000`
+2. **Select an AI model** (e.g., Claude 3 Sonnet or GPT-4)
+3. **Browse files** using the file explorer
+4. **Start chatting** with the AI:
+   - "Create a new React component for user authentication"
+   - "Review the code in src/agent/CodingAgent.ts for potential bugs"
+   - "Add TypeScript types to all functions in this file"
+5. **Edit files** directly in the Monaco editor
+6. **Save changes** with Ctrl+S or the Save button
+
 ### Example 1: Creating a React Component
 
+**In the chat:**
 ```
 You: Create a TypeScript React component for a loading spinner
 
@@ -253,8 +346,11 @@ Agent: I'll create a loading spinner component for you...
 [Creates src/components/LoadingSpinner.tsx with implementation]
 ```
 
+The file will appear in the file explorer, and you can click to edit it.
+
 ### Example 2: Code Review
 
+**In the chat:**
 ```
 You: Review this function for potential issues:
 function processData(data) {
@@ -268,14 +364,22 @@ Agent: I see a few potential issues with this function:
 ...
 ```
 
-### Example 3: Multi-file Project
+### Example 3: Multi-file Project Analysis
 
+**In the chat:**
 ```
 You: Analyze my project structure and suggest improvements
 
 Agent: I'll analyze your project structure...
 [Lists files, identifies patterns, suggests improvements]
 ```
+
+### Example 4: Real-time Collaboration
+
+1. Open a file in the editor
+2. Ask the AI to make specific changes
+3. Watch as the AI explains and implements the changes
+4. Review and save the modifications
 
 ## Troubleshooting
 
@@ -333,16 +437,21 @@ For issues and questions, please open an issue on GitHub.
 
 ## Roadmap
 
+- [x] Web interface with code editor
+- [x] File explorer and management
+- [x] Real-time AI streaming
 - [ ] Google Gemini integration
 - [ ] Mistral AI integration
 - [ ] Plugin system for custom tools
 - [ ] Multi-agent collaboration
-- [ ] Web interface option
 - [ ] Code execution sandbox
-- [ ] Git integration
-- [ ] Test generation
+- [ ] Git integration (branch management, commits, PRs)
+- [ ] Test generation and execution
 - [ ] Documentation generation
 - [ ] Performance monitoring
+- [ ] Collaborative editing (multi-user)
+- [ ] Terminal integration in web UI
+- [ ] Deployment automation
 
 ---
 
