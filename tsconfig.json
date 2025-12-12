@@ -2,10 +2,13 @@
   "compilerOptions": {
     "target": "ES2020",
     "module": "commonjs",
-    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "lib": [
+      "ES2020",
+      "DOM",
+      "DOM.Iterable"
+    ],
     "jsx": "preserve",
     "outDir": "./dist",
-    "rootDir": "./src",
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
@@ -20,10 +23,29 @@
     "noEmit": false,
     "incremental": true,
     "paths": {
-      "@/*": ["./src/*"],
-      "@/web/*": ["./src/web/*"]
-    }
+      "@/*": [
+        "./src/*"
+      ],
+      "@/web/*": [
+        "./src/web/*"
+      ]
+    },
+    "allowJs": true
   },
-  "include": ["src/**/*", "pages/**/*", "next-env.d.ts"],
-  "exclude": ["node_modules", "dist", ".next"]
+  "include": [
+    "src/web/**/*",
+    "src/agent/**/*",
+    "src/models/**/*",
+    "src/utils/**/*",
+    "src/types/**/*",
+    "pages/**/*",
+    "next-env.d.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    ".next",
+    "src/cli.tsx",
+    "src/components"
+  ]
 }

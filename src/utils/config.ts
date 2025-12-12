@@ -73,6 +73,27 @@ export class ConfigManager {
       temperature: parseFloat(process.env.TEMPERATURE || '0.7'),
     };
   }
+
+  getGitHubToken(): string | undefined {
+    return process.env.GITHUB_TOKEN || this.get<string>('githubToken');
+  }
+
+  setGitHubToken(token: string): void {
+    this.set('githubToken', token);
+  }
+
+  getGitHubRepo(): { owner: string; repo: string } | undefined {
+    const repoString = this.get<string>('githubRepo');
+    if (repoString) {
+      const [owner, repo] = repoString.split('/');
+      return { owner, repo };
+    }
+    return undefined;
+  }
+
+  setGitHubRepo(owner: string, repo: string): void {
+    this.set('githubRepo', `${owner}/${repo}`);
+  }
 }
 
 export const configManager = new ConfigManager();

@@ -1,6 +1,8 @@
 node_modules/
 dist/
 .env
+.env.local
+.env.*.local
 *.log
 .DS_Store
 coverage/
@@ -10,6 +12,21 @@ coverage/
 *.swo
 .agent-history/
 .agent-logs/
+.agent-config.json
+
+# Sensitive files
+id_rsa*
+id_dsa*
+id_ecdsa*
+id_ed25519*
+*.pem
+*.key
+*.p12
+*.pfx
+credentials*
+secrets*
+config.json
+auth.json
 
 # Next.js
 .next/
@@ -19,3 +36,7 @@ next-env.d.ts
 # Build files
 build/
 *.tsbuildinfo
+
+# Security
+.npmrc
+.yarnrc

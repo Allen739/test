@@ -55,7 +55,7 @@ const SocketHandler = (req: NextApiRequest, res: any) => {
       try {
         const { model, provider } = data;
 
-        const modelConfig = configManager.getModelConfig(provider, model);
+        const modelConfig = configManager.getModelConfig(provider as any, model);
         const modelInstance = ModelFactory.createModel(modelConfig);
 
         const workingDir = process.cwd();
