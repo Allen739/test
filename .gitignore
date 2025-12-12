@@ -9,3 +9,13 @@ coverage/
 *.swp
 *.swo
 .agent-history/
+.agent-logs/
+
+# Next.js
+.next/
+out/
+next-env.d.ts
+
+# Build files
+build/
+*.tsbuildinfo
