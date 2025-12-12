@@ -219,23 +219,23 @@ export const AgenticChatInterface: React.FC<AgenticChatInterfaceProps> = ({
   };
 
   return (
-    <div className="flex flex-col h-full bg-gray-800">
+    <div className="flex flex-col h-full bg-gradient-to-b from-gray-800 to-gray-900">
       {/* Chat Header */}
-      <div className="px-4 py-3 border-b border-gray-700">
+      <div className="px-4 py-3 border-b border-gray-700/50 bg-gray-800/50 backdrop-blur-sm">
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-lg font-semibold text-blue-400">
+            <h2 className="text-lg font-semibold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
               Agentic AI Assistant
             </h2>
-            <p className="text-xs text-gray-400 mt-1">{model.name}</p>
+            <p className="text-xs text-gray-400 mt-0.5">{model.name}</p>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 px-2 py-1 bg-gray-700/50 rounded-full">
             <div
               className={`w-2 h-2 rounded-full ${
-                connected ? 'bg-green-500' : 'bg-red-500'
+                connected ? 'bg-green-500 animate-pulse' : 'bg-red-500'
               }`}
             />
-            <span className="text-xs text-gray-400">
+            <span className="text-xs text-gray-300 font-medium">
               {connected ? 'Connected' : 'Disconnected'}
             </span>
           </div>
@@ -279,12 +279,12 @@ export const AgenticChatInterface: React.FC<AgenticChatInterfaceProps> = ({
                   }`}
                 >
                   <div
-                    className={`max-w-[85%] rounded-lg px-4 py-2 ${
+                    className={`max-w-[85%] rounded-lg px-4 py-2.5 shadow-lg ${
                       message.role === 'user'
-                        ? 'bg-blue-600 text-white'
+                        ? 'bg-gradient-to-br from-blue-600 to-blue-700 text-white'
                         : message.role === 'system'
-                        ? 'bg-red-900 text-red-100'
-                        : 'bg-gray-700 text-gray-100'
+                        ? 'bg-gradient-to-br from-red-900 to-red-800 text-red-100 border border-red-700/50'
+                        : 'bg-gradient-to-br from-gray-700 to-gray-750 text-gray-100 border border-gray-600/30'
                     }`}
                   >
                     <div className="flex items-center gap-2 mb-1">
@@ -364,26 +364,39 @@ export const AgenticChatInterface: React.FC<AgenticChatInterfaceProps> = ({
       </div>
 
       {/* Input Area */}
-      <form onSubmit={handleSubmit} className="p-4 border-t border-gray-700">
+      <form onSubmit={handleSubmit} className="p-4 border-t border-gray-700/50 bg-gray-800/50 backdrop-blur-sm">
         <div className="flex gap-2">
           <input
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
             placeholder="Ask me to build or modify something..."
-            className="flex-1 bg-gray-700 text-gray-100 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="flex-1 bg-gray-700/70 text-gray-100 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-gray-700 border border-gray-600/30 placeholder-gray-400 transition-all"
             disabled={isLoading || !connected}
           />
           <button
             type="submit"
             disabled={isLoading || !input.trim() || !connected}
-            className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 disabled:cursor-not-allowed text-white rounded-lg px-6 py-2 font-medium transition-colors"
+            className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 disabled:from-gray-600 disabled:to-gray-700 disabled:cursor-not-allowed text-white rounded-lg px-6 py-2.5 font-medium transition-all shadow-lg hover:shadow-blue-500/20"
           >
-            {isLoading ? 'Working...' : 'Send'}
+            {isLoading ? (
+              <span className="flex items-center gap-2">
+                <svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                Working...
+              </span>
+            ) : (
+              'Send'
+            )}
           </button>
         </div>
-        <div className="mt-2 text-xs text-gray-500">
-          💡 Try: "Create a login component" or "Add tests to the utils folder"
+        <div className="mt-2 text-xs text-gray-400 flex items-center gap-1">
+          <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
+            <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+          </svg>
+          Try: "Create a login component" or "Add tests to the utils folder"
         </div>
       </form>
     </div>

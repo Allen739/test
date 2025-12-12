@@ -4,6 +4,8 @@ import * as fs from 'fs-extra';
 import * as path from 'path';
 import { exec } from 'child_process';
 import { promisify } from 'util';
+import { Octokit } from '@octokit/rest';
+import { configManager } from '../utils/config';
 
 const execAsync = promisify(exec);
 
@@ -47,6 +49,7 @@ export class AdvancedAgentTools {
     this.registerFileTools();
     this.registerCodeAnalysisTools();
     this.registerGitTools();
+    this.registerGitHubTools();
     this.registerTestTools();
     this.registerPackageTools();
     this.registerTerminalTools();
@@ -387,6 +390,320 @@ export class AdvancedAgentTools {
           return { success: true, diff: stdout, hasChanges: stdout.length > 0 };
         } catch (error: any) {
           throw new Error(`Git diff failed: ${error.message}`);
+        }
+      },
+    });
+  }
+
+  private registerGitHubTools(): void {
+    // List GitHub Repositories
+    this.tools.set('github_list_repos', {
+      name: 'github_list_repos',
+      description: 'List all repositories for the authenticated GitHub user or organization',
+      parameters: {
+        type: 'object',
+        properties: {
+          org: { type: 'string', description: 'Organization name (optional, defaults to user repos)' },
+          limit: { type: 'number', description: 'Maximum number of repos to return', default: 30 },
+        },
+        required: [],
+      },
+      execute: async (params: { org?: string; limit?: number }) => {
+        const token = configManager.getGitHubToken();
+        if (!token) {
+          throw new Error('GitHub token not configured. Please set GITHUB_TOKEN in .env or configure it in settings.');
+        }
+
+        const octokit = new Octokit({ auth: token });
+        const limit = params.limit || 30;
+
+        try {
+          let repos;
+          if (params.org) {
+            repos = await octokit.repos.listForOrg({ org: params.org, per_page: limit });
+          } else {
+            repos = await octokit.repos.listForAuthenticatedUser({ per_page: limit });
+          }
+
+          return {
+            success: true,
+            count: repos.data.length,
+            repositories: repos.data.map(repo => ({
+              name: repo.name,
+              fullName: repo.full_name,
+              owner: repo.owner.login,
+              description: repo.description,
+              private: repo.private,
+              url: repo.html_url,
+              defaultBranch: repo.default_branch,
+              stars: repo.stargazers_count,
+              language: repo.language,
+            })),
+          };
+        } catch (error: any) {
+          throw new Error(`Failed to list GitHub repositories: ${error.message}`);
+        }
+      },
+    });
+
+    // Get Repository Contents
+    this.tools.set('github_get_contents', {
+      name: 'github_get_contents',
+      description: 'Get the contents of a file or directory from a GitHub repository',
+      parameters: {
+        type: 'object',
+        properties: {
+          owner: { type: 'string', description: 'Repository owner' },
+          repo: { type: 'string', description: 'Repository name' },
+          path: { type: 'string', description: 'Path to file or directory', default: '' },
+          ref: { type: 'string', description: 'Branch, commit, or tag (optional)' },
+        },
+        required: ['owner', 'repo'],
+      },
+      execute: async (params: { owner: string; repo: string; path?: string; ref?: string }) => {
+        const token = configManager.getGitHubToken();
+        if (!token) {
+          throw new Error('GitHub token not configured');
+        }
+
+        const octokit = new Octokit({ auth: token });
+
+        try {
+          const response = await octokit.repos.getContent({
+            owner: params.owner,
+            repo: params.repo,
+            path: params.path || '',
+            ref: params.ref,
+          });
+
+          if (Array.isArray(response.data)) {
+            // Directory listing
+            return {
+              success: true,
+              type: 'directory',
+              items: response.data.map(item => ({
+                name: item.name,
+                path: item.path,
+                type: item.type,
+                size: item.size,
+              })),
+            };
+          } else if ('content' in response.data) {
+            // File content
+            const content = Buffer.from(response.data.content, 'base64').toString('utf-8');
+            return {
+              success: true,
+              type: 'file',
+              name: response.data.name,
+              path: response.data.path,
+              content,
+              size: response.data.size,
+            };
+          }
+        } catch (error: any) {
+          throw new Error(`Failed to get GitHub contents: ${error.message}`);
+        }
+      },
+    });
+
+    // Create or Update File
+    this.tools.set('github_create_or_update_file', {
+      name: 'github_create_or_update_file',
+      description: 'Create or update a file in a GitHub repository',
+      parameters: {
+        type: 'object',
+        properties: {
+          owner: { type: 'string', description: 'Repository owner' },
+          repo: { type: 'string', description: 'Repository name' },
+          path: { type: 'string', description: 'Path to file' },
+          content: { type: 'string', description: 'File content' },
+          message: { type: 'string', description: 'Commit message' },
+          branch: { type: 'string', description: 'Branch name (optional)' },
+        },
+        required: ['owner', 'repo', 'path', 'content', 'message'],
+      },
+      execute: async (params: { owner: string; repo: string; path: string; content: string; message: string; branch?: string }) => {
+        const token = configManager.getGitHubToken();
+        if (!token) {
+          throw new Error('GitHub token not configured');
+        }
+
+        const octokit = new Octokit({ auth: token });
+
+        try {
+          // Check if file exists to get SHA
+          let sha: string | undefined;
+          try {
+            const existing = await octokit.repos.getContent({
+              owner: params.owner,
+              repo: params.repo,
+              path: params.path,
+              ref: params.branch,
+            });
+            if (!Array.isArray(existing.data) && 'sha' in existing.data) {
+              sha = existing.data.sha;
+            }
+          } catch (e) {
+            // File doesn't exist, will create new
+          }
+
+          const response = await octokit.repos.createOrUpdateFileContents({
+            owner: params.owner,
+            repo: params.repo,
+            path: params.path,
+            message: params.message,
+            content: Buffer.from(params.content).toString('base64'),
+            sha,
+            branch: params.branch,
+          });
+
+          return {
+            success: true,
+            path: params.path,
+            commit: response.data.commit.sha,
+            url: response.data.content?.html_url,
+          };
+        } catch (error: any) {
+          throw new Error(`Failed to create/update file on GitHub: ${error.message}`);
+        }
+      },
+    });
+
+    // Create Pull Request
+    this.tools.set('github_create_pr', {
+      name: 'github_create_pr',
+      description: 'Create a pull request in a GitHub repository',
+      parameters: {
+        type: 'object',
+        properties: {
+          owner: { type: 'string', description: 'Repository owner' },
+          repo: { type: 'string', description: 'Repository name' },
+          title: { type: 'string', description: 'PR title' },
+          body: { type: 'string', description: 'PR description' },
+          head: { type: 'string', description: 'Branch containing changes' },
+          base: { type: 'string', description: 'Base branch to merge into', default: 'main' },
+        },
+        required: ['owner', 'repo', 'title', 'head'],
+      },
+      execute: async (params: { owner: string; repo: string; title: string; body?: string; head: string; base?: string }) => {
+        const token = configManager.getGitHubToken();
+        if (!token) {
+          throw new Error('GitHub token not configured');
+        }
+
+        const octokit = new Octokit({ auth: token });
+
+        try {
+          const response = await octokit.pulls.create({
+            owner: params.owner,
+            repo: params.repo,
+            title: params.title,
+            body: params.body,
+            head: params.head,
+            base: params.base || 'main',
+          });
+
+          return {
+            success: true,
+            number: response.data.number,
+            url: response.data.html_url,
+            state: response.data.state,
+          };
+        } catch (error: any) {
+          throw new Error(`Failed to create pull request: ${error.message}`);
+        }
+      },
+    });
+
+    // List Pull Requests
+    this.tools.set('github_list_prs', {
+      name: 'github_list_prs',
+      description: 'List pull requests in a GitHub repository',
+      parameters: {
+        type: 'object',
+        properties: {
+          owner: { type: 'string', description: 'Repository owner' },
+          repo: { type: 'string', description: 'Repository name' },
+          state: { type: 'string', description: 'PR state: open, closed, all', default: 'open' },
+          limit: { type: 'number', description: 'Maximum number of PRs', default: 30 },
+        },
+        required: ['owner', 'repo'],
+      },
+      execute: async (params: { owner: string; repo: string; state?: string; limit?: number }) => {
+        const token = configManager.getGitHubToken();
+        if (!token) {
+          throw new Error('GitHub token not configured');
+        }
+
+        const octokit = new Octokit({ auth: token });
+
+        try {
+          const response = await octokit.pulls.list({
+            owner: params.owner,
+            repo: params.repo,
+            state: (params.state as any) || 'open',
+            per_page: params.limit || 30,
+          });
+
+          return {
+            success: true,
+            count: response.data.length,
+            pullRequests: response.data.map(pr => ({
+              number: pr.number,
+              title: pr.title,
+              state: pr.state,
+              author: pr.user?.login,
+              url: pr.html_url,
+              createdAt: pr.created_at,
+              updatedAt: pr.updated_at,
+            })),
+          };
+        } catch (error: any) {
+          throw new Error(`Failed to list pull requests: ${error.message}`);
+        }
+      },
+    });
+
+    // Create Issue
+    this.tools.set('github_create_issue', {
+      name: 'github_create_issue',
+      description: 'Create an issue in a GitHub repository',
+      parameters: {
+        type: 'object',
+        properties: {
+          owner: { type: 'string', description: 'Repository owner' },
+          repo: { type: 'string', description: 'Repository name' },
+          title: { type: 'string', description: 'Issue title' },
+          body: { type: 'string', description: 'Issue description' },
+          labels: { type: 'array', items: { type: 'string' }, description: 'Issue labels' },
+        },
+        required: ['owner', 'repo', 'title'],
+      },
+      execute: async (params: { owner: string; repo: string; title: string; body?: string; labels?: string[] }) => {
+        const token = configManager.getGitHubToken();
+        if (!token) {
+          throw new Error('GitHub token not configured');
+        }
+
+        const octokit = new Octokit({ auth: token });
+
+        try {
+          const response = await octokit.issues.create({
+            owner: params.owner,
+            repo: params.repo,
+            title: params.title,
+            body: params.body,
+            labels: params.labels,
+          });
+
+          return {
+            success: true,
+            number: response.data.number,
+            url: response.data.html_url,
+            state: response.data.state,
+          };
+        } catch (error: any) {
+          throw new Error(`Failed to create issue: ${error.message}`);
         }
       },
     });
