@@ -2,7 +2,7 @@ import type { NextApiRequest } from 'next';
 import type { Server as HTTPServer } from 'http';
 import type { Socket as NetSocket } from 'net';
 import { Server as IOServer } from 'socket.io';
-import { AgenticCodingAgent, AgentAction } from '../../src/agent/AgenticCodingAgent';
+import { EliteAgenticCodingAgent, AgentAction } from '../../src/agent/EliteAgenticCodingAgent';
 import { ModelFactory } from '../../src/models/ModelFactory';
 import { FileSystemManager } from '../../src/utils/fileSystem';
 import { configManager } from '../../src/utils/config';
@@ -42,7 +42,7 @@ const SocketHandler = (req: NextApiRequest, res: any) => {
   const agentSessions = new Map<
     string,
     {
-      agent: AgenticCodingAgent;
+      agent: EliteAgenticCodingAgent;
       fileSystem: FileSystemManager;
     }
   >();
@@ -61,7 +61,7 @@ const SocketHandler = (req: NextApiRequest, res: any) => {
         const workingDir = process.cwd();
         const fileSystem = new FileSystemManager(workingDir);
 
-        const agent = new AgenticCodingAgent(
+        const agent = new EliteAgenticCodingAgent(
           modelInstance,
           fileSystem,
           (action: AgentAction) => {
