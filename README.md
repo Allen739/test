@@ -1,98 +1,349 @@
-# AI Coding Agent Testing Repo 🤖💻
+# React CLI Coding Agent
 
-Welcome to the **AI Coding Agent Testing Repo**! This repository is dedicated to exploring and testing the capabilities of AI-powered coding agents in generating, debugging, and improving code. 🎉🚀
+A fully functional CLI coding agent built with React (Ink) and TypeScript, supporting multiple AI models from OpenAI, Anthropic, and more.
 
-> **Note**: This repo is intentionally designed for testing AI's ability to assist in various stages of coding, from writing clean code to troubleshooting and refactoring.
+## Features
 
----
+- Interactive terminal UI built with React Ink
+- Support for multiple AI providers:
+  - OpenAI (GPT-4, GPT-3.5 Turbo)
+  - Anthropic (Claude 3 Opus, Sonnet, Haiku)
+  - Google Gemini (coming soon)
+  - Mistral (coming soon)
+- Real-time streaming responses
+- File system operations (read, write, delete, list)
+- Code generation and analysis
+- Conversation history management
+- Configurable settings
+- Error handling and logging
 
-## 🎯 Repo Objectives
+## Quick Start
 
-- **Code Generation**: Test the agent's ability to write new code from scratch in various languages.
-- **Bug Fixing**: Challenge the agent to identify and fix bugs in existing codebases.
-- **Refactoring**: Evaluate the agent's ability to refactor code for improved performance, readability, or maintainability.
-- **Code Optimization**: Check how well the agent can optimize algorithms and data structures.
-- **Documentation**: Test the agent’s ability to generate clear, concise documentation for code.
-
----
-
-## 🧑‍💻 Technologies and Languages
-
-This repo will feature code in various programming languages to evaluate the AI's proficiency in each:
-
-- Python 🐍
-- JavaScript ⚡
-- More support coming soon!!!
-
-## 🤖 How This Repo Works
-
-1. **Connect the repo to the agent**: The AI can create an issue outlining the problem to solve (e.g., code generation, bug fixing, or optimization).
-2. **AI Solutions**: The AI agent will provide its solution or improvements through Pull Requests (PRs).
-3. **Code Review**: Manually or through AI feedback, review the code for accuracy, performance, and best practices.
-4. **Test**: Run tests to ensure the solution works as expected.
-
----
-
----
-
-## 🚀 Getting Started
-
-### 1. Clone the Repo
-
-First, clone this repository to your local machine to start experimenting:
+### 1. Installation
 
 ```bash
-git clone https://github.com/your-username/ai-coding-agent-testing.git
-cd test
-````
+npm install
+```
 
-### 2. Set Up the Environment
+### 2. Configuration
 
-Set up your coding agnet environment for the specific language or framework you're testing:
+Copy the example environment file and add your API keys:
 
-## 🏆 AI Performance Evaluation
+```bash
+cp .env.example .env
+```
 
-Here’s a quick checklist of how the AI's performance is evaluated:
+Edit `.env` and add your API keys:
 
-* **Code Correctness** ✅: Does the code work as expected?
-* **Efficiency** ⚡: Is the code optimized for performance?
-* **Code Style** 🖋️: Does the code follow best practices?
-* **Error Handling** 🔴: Does the code gracefully handle edge cases and errors?
-* **Documentation** 📚: Is the code and logic well-documented?
+```env
+OPENAI_API_KEY=your_openai_api_key_here
+ANTHROPIC_API_KEY=your_anthropic_api_key_here
+DEFAULT_PROVIDER=openai
+DEFAULT_MODEL=gpt-4
+```
+
+### 3. Build
+
+```bash
+npm run build
+```
+
+### 4. Run
+
+```bash
+npm run dev
+# or
+npm start
+# or
+./dist/cli.js
+```
+
+## Usage
+
+### Interactive Chat Mode
+
+Simply run the agent to start an interactive chat session:
+
+```bash
+npm run dev
+```
+
+You'll be presented with a model selector. Use arrow keys to choose your preferred model, then press Enter to start chatting.
+
+### Command Line Options
+
+#### Chat with Specific Model
+
+```bash
+npm run dev chat --provider openai --model gpt-4
+npm run dev chat --provider anthropic --model claude-3-opus-20240229
+```
+
+#### List Available Models
+
+```bash
+npm run dev models
+```
+
+#### Configuration Management
+
+```bash
+# Set configuration
+npm run dev config --set provider=anthropic
+
+# Get configuration
+npm run dev config --get model
+
+# List all configuration
+npm run dev config --list
+```
+
+## Supported Models
+
+### OpenAI
+- GPT-4 (8K context)
+- GPT-4 Turbo (128K context)
+- GPT-3.5 Turbo (16K context)
+
+### Anthropic
+- Claude 3 Opus (200K context)
+- Claude 3 Sonnet (200K context)
+- Claude 3 Haiku (200K context)
+
+### Coming Soon
+- Google Gemini Pro
+- Mistral Large
+
+## Agent Capabilities
+
+### File Operations
+
+The agent can perform various file operations:
+
+```
+> Read the package.json file
+> Create a new React component in src/components/Button.tsx
+> List all TypeScript files in the project
+> Delete the old-config.js file
+```
+
+### Code Generation
+
+```
+> Create a TypeScript function to validate email addresses
+> Write a Python script that processes CSV files
+> Generate a REST API endpoint for user authentication
+```
+
+### Code Analysis & Debugging
+
+```
+> Explain this code: [paste code]
+> Review my code for bugs and security issues
+> Help me optimize this function
+> Debug this error: TypeError: Cannot read property 'x' of undefined
+```
+
+### Context Awareness
+
+The agent understands your project structure and can work with multiple files:
+
+```
+> Show me the current project structure
+> Analyze all components in the src directory
+> Refactor the authentication module
+```
+
+## Project Structure
+
+```
+.
+├── src/
+│   ├── agent/
+│   │   └── CodingAgent.ts          # Main agent logic
+│   ├── components/
+│   │   ├── App.tsx                 # Main app component
+│   │   ├── Chat.tsx                # Chat interface
+│   │   └── ModelSelector.tsx       # Model selection UI
+│   ├── models/
+│   │   ├── BaseModel.ts            # Abstract base model
+│   │   ├── OpenAIModel.ts          # OpenAI integration
+│   │   ├── AnthropicModel.ts       # Anthropic integration
+│   │   └── ModelFactory.ts         # Model factory
+│   ├── utils/
+│   │   ├── config.ts               # Configuration manager
+│   │   ├── fileSystem.ts           # File operations
+│   │   ├── history.ts              # Conversation history
+│   │   └── logger.ts               # Logging utility
+│   ├── types/
+│   │   └── index.ts                # TypeScript types
+│   └── cli.tsx                     # CLI entry point
+├── dist/                           # Compiled output
+├── .env.example                    # Example environment variables
+├── package.json
+├── tsconfig.json
+├── README.md
+└── USAGE.md                        # Detailed usage guide
+```
+
+## Development
+
+### Watch Mode
+
+```bash
+npm run watch
+```
+
+### Development Mode
+
+```bash
+npm run dev
+```
+
+### Build
+
+```bash
+npm run build
+```
+
+## Advanced Features
+
+### Conversation History
+
+All conversations are automatically saved to `.agent-history/` with timestamps. Sessions include:
+- All messages (user and assistant)
+- Model information
+- Timestamp
+
+### Logging
+
+Detailed logs are saved to `.agent-logs/agent.log` for debugging and monitoring.
+
+### Streaming Responses
+
+The agent supports real-time streaming responses for a better user experience. Responses appear as they're generated by the AI model.
+
+### Configuration Persistence
+
+Settings are saved to `.agent-config.json` and persist across sessions.
+
+## Keyboard Shortcuts
+
+- `Ctrl+Q` - Quit the application
+- `Enter` - Send message / Select option
+- `Arrow Keys` - Navigate options
+
+## API Requirements
+
+You need at least one of the following API keys:
+
+- OpenAI API key: Get it from https://platform.openai.com/api-keys
+- Anthropic API key: Get it from https://console.anthropic.com/
+
+Add them to your `.env` file.
+
+## Examples
+
+### Example 1: Creating a React Component
+
+```
+You: Create a TypeScript React component for a loading spinner
+
+Agent: I'll create a loading spinner component for you...
+[Creates src/components/LoadingSpinner.tsx with implementation]
+```
+
+### Example 2: Code Review
+
+```
+You: Review this function for potential issues:
+function processData(data) {
+  return data.map(item => item.value * 2)
+}
+
+Agent: I see a few potential issues with this function:
+1. No input validation - data might be null/undefined
+2. No error handling for items without a 'value' property
+3. Missing TypeScript types
+...
+```
+
+### Example 3: Multi-file Project
+
+```
+You: Analyze my project structure and suggest improvements
+
+Agent: I'll analyze your project structure...
+[Lists files, identifies patterns, suggests improvements]
+```
+
+## Troubleshooting
+
+### API Key Issues
+
+Make sure your `.env` file exists and contains valid API keys:
+
+```bash
+cat .env
+```
+
+### Build Errors
+
+Clean and rebuild:
+
+```bash
+rm -rf dist node_modules
+npm install
+npm run build
+```
+
+### Model Not Available
+
+Check available models and verify your API keys:
+
+```bash
+npm run dev models
+```
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Acknowledgments
+
+- Built with [React Ink](https://github.com/vadimdemedes/ink) for terminal UI
+- Powered by [OpenAI](https://openai.com/) and [Anthropic](https://www.anthropic.com/)
+- Created by Terragon Labs
+
+## Support
+
+For detailed usage instructions, see [USAGE.md](USAGE.md)
+
+For issues and questions, please open an issue on GitHub.
+
+## Roadmap
+
+- [ ] Google Gemini integration
+- [ ] Mistral AI integration
+- [ ] Plugin system for custom tools
+- [ ] Multi-agent collaboration
+- [ ] Web interface option
+- [ ] Code execution sandbox
+- [ ] Git integration
+- [ ] Test generation
+- [ ] Documentation generation
+- [ ] Performance monitoring
 
 ---
 
-## 📚 Contributions
-
-This is an open testing ground! Feel free to submit your own code challenges for the AI agent, or contribute by reviewing and providing feedback on AI-generated PRs.
-
-To contribute, follow these steps:
-
-1. Fork the repo.
-2. Create a new branch (`git checkout -b feature/ai-challenge`).
-3. Commit your changes.
-4. Push to your branch.
-5. Create a pull request.
-
----
-
-## 👾 License
-
-This repository is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
-
----
-
-
-## 💡 Fun Fact
-
-Did you know? This repository is powered by AI, but we're still making sure it's **human-approved**! 🤖💡
-
----
-
-Happy coding and testing! Let’s push the boundaries of AI-assisted software development! 🚀
-
----
-
-**Created with ❤️ by [Allen739]**
-
----
+**Built with React by Terragon Labs**

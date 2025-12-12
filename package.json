@@ -1,0 +1,56 @@
+{
+  "name": "react-cli-coding-agent",
+  "version": "1.0.0",
+  "description": "A fully functional CLI coding agent built with React and supporting multiple AI models",
+  "main": "dist/index.js",
+  "bin": {
+    "code-agent": "./dist/cli.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx src/cli.tsx",
+    "start": "node dist/cli.js",
+    "watch": "tsc --watch",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "cli",
+    "coding-agent",
+    "ai",
+    "react",
+    "ink",
+    "openai",
+    "anthropic",
+    "typescript"
+  ],
+  "author": "Terragon Labs",
+  "license": "MIT",
+  "dependencies": {
+    "ink": "^4.4.1",
+    "react": "^18.2.0",
+    "ink-text-input": "^5.0.1",
+    "ink-select-input": "^5.0.0",
+    "ink-spinner": "^5.0.0",
+    "commander": "^11.1.0",
+    "openai": "^4.20.1",
+    "anthropic": "^0.9.1",
+    "glob": "^10.3.10",
+    "fs-extra": "^11.2.0",
+    "chalk": "^4.1.2",
+    "ora": "^5.4.1",
+    "dotenv": "^16.3.1",
+    "gray-matter": "^4.0.3",
+    "marked": "^11.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.45",
+    "@types/node": "^20.10.5",
+    "@types/fs-extra": "^11.0.4",
+    "typescript": "^5.3.3",
+    "tsx": "^4.7.0",
+    "@types/marked": "^6.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
